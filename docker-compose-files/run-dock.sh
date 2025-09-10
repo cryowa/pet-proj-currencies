@@ -1,7 +1,15 @@
 set -e
 
+echo "Docker building Kafka..."
+docker compose -f kafka.yml up -d
+echo "DONE!"
+
+echo "Docker building Minio..."
+docker compose -f minio.yml up -d
+echo "DONE!"
+
 echo "Docker building Minio, Kafka and Postgres..."
-docker compose -f minio-kafka-postgres.yml up -d
+docker compose -f postgres.yml up -d
 echo "DONE!"
 
 echo "Docker building Spark and Jupyter..."
