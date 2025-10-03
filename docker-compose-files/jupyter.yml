@@ -1,0 +1,13 @@
+services:
+  jupyter:
+    image: jupyter/pyspark-notebook:latest
+    container_name: jupyter-lab
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./notebooks:/home/jovyan/work
+      - ./kernels:/opt/conda/share/jupyter/kernels
+    environment:
+      - JUPYTER_TOKEN=mysecret
+    command: start.sh jupyter lab --LabApp.token='mysecret' --LabApp.ip=0.0.0.0 --LabApp.allow_remote_access=True
+    restart: unless-stopped

@@ -6,7 +6,7 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: crypto_db
+      POSTGRES_DB: transact_crypto_db
     volumes:
       - pgdata:/var/lib/postgresql/data
   volumes:
