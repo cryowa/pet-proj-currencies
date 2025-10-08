@@ -1,5 +1,4 @@
-
-TOPIC_NAME=${1:-"BTC-USDT-trades"}  # topic name
+TOPIC_NAME=${1:-"trades"}  # topic name
 PARTITIONS=${2:-1}                   # partitions
 REPLICATION_FACTOR=${3:-1}           # replicas
 

@@ -5,7 +5,7 @@ import time
 from kafka import KafkaProducer
 
 KAFKA_BOOTSTRAP_SERVERS = "localhost:9092"
-TOPIC = "BTC-USDT-trades"
+TOPIC = "trades"
 url_wsp = "wss://ws.okx.com:8443/ws/v5/public"
 
 # Kafka config
