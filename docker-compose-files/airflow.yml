@@ -10,52 +10,84 @@ services:
     volumes:
       - airflow_postgres_data:/var/lib/postgresql/data
     networks:
-      - airflow_net
+      - common_net
 
   airflow-init:
-    image: apache/airflow:2.9.1-python3.11
+    build: .
     container_name: airflow_init
     depends_on:
       - airflow-postgres
     environment:
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres:5432/airflow
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW__CORE__PLUGINS_FOLDER: /opt/airflow/plugins
+      AIRFLOW__CORE__BASE_LOG_FOLDER: /opt/airflow/logs
+    volumes:
+      - ./airflow:/opt/airflow
+      - ./requirements.txt:/opt/airflow/requirements.txt
+
     entrypoint: >
-      bash -c "airflow db migrate && airflow users create --username admin --firstname Admin --lastname User --role Admin --email admin@example.com --password admin"
+      bash -c "
+        echo 'Waiting for Postgres...'
+        until airflow db check; do
+          sleep 2
+        done
+        mkdir -p /opt/airflow/dags /opt/airflow/logs /opt/airflow/plugins
+        chown -R airflow: /opt/airflow
+        airflow db init
+        airflow users create --username admin --firstname Admin --lastname User --role Admin --email admin@example.com --password admin
+      "
     networks:
-      - airflow_net
+      - common_net
 
   airflow-webserver:
-    image: apache/airflow:2.9.1-python3.11
+    build: .
     container_name: airflow_webserver
     restart: always
     depends_on:
       - airflow-init
-    ports:
-      - "8081:8080"
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres:5432/airflow
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW__CORE__PLUGINS_FOLDER: /opt/airflow/plugins
+      AIRFLOW__CORE__BASE_LOG_FOLDER: /opt/airflow/logs
+    volumes:
+      - ./airflow:/opt/airflow
+      - ./requirements.txt:/opt/airflow/requirements.txt
+
     command: webserver
+    ports:
+      - "8081:8080"
     networks:
-      - airflow_net
+      - common_net
 
   airflow-scheduler:
-    image: apache/airflow:2.9.1-python3.11
+    build: .
     container_name: airflow_scheduler
     restart: always
     depends_on:
       - airflow-init
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
-    command: scheduler
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres:5432/airflow
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW__CORE__PLUGINS_FOLDER: /opt/airflow/plugins
+      AIRFLOW__CORE__BASE_LOG_FOLDER: /opt/airflow/logs
+    volumes:
+      - ./airflow:/opt/airflow
+      - ./requirements.txt:/opt/airflow/requirements.txt
     networks:
-      - airflow_net
+      - common_net
+    
+    command: scheduler
+    
 
 volumes:
   airflow_postgres_data:
 
 networks:
-  airflow_net:
-    driver: bridge
+  common_net:
+    external: true
+

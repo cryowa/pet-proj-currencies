@@ -1,5 +1,5 @@
-TOPIC_NAME=${1:-"trades"}  # topic name
-PARTITIONS=${2:-1}                   # partitions
+TOPIC_NAME=${1:-"trades"}           # topic name
+PARTITIONS=${2:-5}                   # partitions
 REPLICATION_FACTOR=${3:-1}           # replicas
 
 
@@ -12,6 +12,7 @@ kafka-topics --create \
 --bootstrap-server kafka:9092 \
 --replication-factor $REPLICATION_FACTOR \
 --partitions $PARTITIONS \
---topic $TOPIC_NAME
+--topic $TOPIC_NAME \
+--config retention.ms=604800000
 
 echo "Ready!"

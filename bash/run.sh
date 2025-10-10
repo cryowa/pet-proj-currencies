@@ -22,27 +22,30 @@ check_service() {
 }
 
 # Running Kafka + Zookeeper
-echo "running Kafka + Zookeeper..."
-docker compose -f /home/user/pet/pet-proj-currencies/docker-compose-files/kafka.yml up -d
+#echo "running Kafka + Zookeeper..."
+#docker compose -f /home/user/pet/pet-proj-currencies/docker-compose-files/kafka.yml up -d
 
 # Checking Kafka UI
 check_service "http://localhost:8080" "Kafka UI"
 
-# Checking ksqlDB REST API
-check_service "http://localhost:8088" "ksqlDB"
+# Running ClickHouse
+#echo "running ClickHouse..."
+#docker compose -f /home/user/pet/pet-proj-currencies/docker-compose-files/click.yml up -d
 
-# Running Grafana
-echo "running Grafana..."
-docker compose -f /home/user/pet/pet-proj-currencies/docker-compose-files/grafana.yml up -d
+# Checking ClickHouse
+check_service "http://localhost:8123" "ClickHouse"
 
-# Checking Grafana
-check_service "http://localhost:3000" "Grafana"
+# Running Airflow
+#echo "running Airflow..."
+#docker compose -f /home/user/pet/pet-proj-currencies/docker-compose-files/airflow.yml up -d
+
+# Checking Airflow
+check_service "http://localhost:8081" "Airflow"
 
 # Running producer
 echo "Running WebSocket producer..."
-python3 /home/user/pet/pet-proj-currencies/python-scripts/btc_usdt_trades_prod_ws_OKX.py &
+python3 /home/user/pet/pet-proj-currencies/python-scripts/trades_prod_ws_OKX.py &
 
 echo "Pipeline is running!"
 echo "Kafka UI: http://localhost:8080"
-echo "ksqlDB REST: http://localhost:8088"
-echo "Grafana: http://localhost:3000"
+echo "Airflow: http://localhost:8081"

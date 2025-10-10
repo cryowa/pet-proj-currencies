@@ -2,9 +2,19 @@
 __pycache__/
 *.py[codz]
 *$py.class
-
 # C extensions
 *.so
+
+# main tools files
+docker-compose-files/airflow/logs
+docker-compose-files/airflow/plugins
+docker-compose-files/airflow/airflow-webserver.pid
+docker-compose-files/airflow/airflow.cfg
+#docker-compose-files/airflow/requirements.txt
+docker-compose-files/airflow/webserver_config.py
+docker-compose-files/clickhouse_config
+docker-compose-files/clickhouse_data
+docker-compose-files/clickhouse_logs
 
 # Distribution / packaging
 .Python

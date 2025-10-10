@@ -13,15 +13,9 @@ services:
     volumes:
       - ./clickhouse_data:/var/lib/clickhouse
       - ./clickhouse_logs:/var/log/clickhouse
-      - ./clickhouse_config:/etc/clickhouse-server
-
-  clickhouse-client:
-    image: clickhouse/clickhouse-client:24.3
-    container_name: clickhouse-client
-    depends_on:
-      - clickhouse
-    entrypoint:
-      - /bin/sh
-      - -c
-      - |
-        sleep 5 && clickhouse-client --host clickhouse --port 9000 --user admin --password admin123
+    networks:
+      - common_net
+  
+networks:
+  common_net:
+    external: true
